@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 import fetch from "node-fetch";
-import { fetchFromYt } from "./youtube.js";
+import handleFetchFromYt from "./youtube.js";
 const app = express();
 app.use(
   cors({
@@ -9,12 +9,12 @@ app.use(
     methods: ["GET"],
   })
 );
-app.use(express.json());
-app.get("/link", fetchFromYt);
+app.use(express.json({ limit: "50mb" }));
+app.get("/link", handleFetchFromYt);
 app.get("*", async (req, res) => {
   try {
     const { url } = req.query;
-    if (!url) {   
+    if (!url) {
       return res.status(400).json({ error: "No URL provided" });
     }
     const response = await fetch(url);

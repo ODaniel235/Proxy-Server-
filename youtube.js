@@ -1,40 +1,66 @@
 import ytdl from "@distube/ytdl-core";
-const getAudioAsBase64 = async (url) => {
-  try {
-    const audioStream = await ytdl(url, {
-      filter: "audioonly",
-      quality: "highestaudio",
-    });
-
-    const chunks = [];
-    return new Promise((resolve, reject) => {
-      audioStream.on("data", (chunk) => {
-        chunks.push(chunk);
-        console.log(chunk);
-      });
-
-      audioStream.on("end", () => {
-        const audioBuffer = Buffer.concat(chunks);
-        const base64Audio = audioBuffer.toString("base64");
-        resolve(base64Audio);
-      });
-
-      audioStream.on("error", (error) => reject(error));
-    });
-  } catch (error) {
-    throw new Error(`Error processing audio: ${error.message}`);
-  }
+import axios from "axios";
+const options = (id) => {
+  return {
+    method: "GET",
+    url: "https://youtube-mp36.p.rapidapi.com/dl",
+    params: { id },
+    headers: {
+      "x-rapidapi-key": "dc38bf1d56msh85054e69143448ap149baejsn0c9237e04bd1",
+      "x-rapidapi-host": "youtube-mp36.p.rapidapi.com",
+    },
+  };
 };
-export const fetchFromYt = async (req, res) => {
+
+// Usage Example
+const handleFetchFromYt = async (req, res) => {
   try {
     const { link } = req.query;
-    console.log("Receieved request at ===>", link);
-    const base64Audio = await getAudioAsBase64(link);
-    console.log(base64Audio);
-    // Send Base64 response
-    res.json({ success: true, base64: base64Audio });
+
+    // Validate the provided YouTube URL
+    if (!link || !ytdl.validateURL(link)) {
+      console.error("Invalid URL provided:", link);
+      return res.status(400).json({ error: "Invalid URL provided" });
+    }
+
+    console.log("Fetching video details for:", link);
+
+    // Get basic info using ytdl-core
+    const data = await ytdl.getBasicInfo(link);
+    const videoId = data.videoDetails.videoId;
+
+    if (!videoId) {
+      console.error("Failed to extract video ID");
+      return res.status(400).json({ error: "Failed to extract video ID" });
+    }
+
+    console.log("Video ID:", videoId);
+
+    // Fetch MP3 link from RapidAPI
+    /*     const fetchedData = await fetch(videoId);
+
+    console.log("Fetched data from RapidAPI:", fetchedData);
+
+    if (!fetchedData || fetchedData.status !== "ok") {
+      console.error("Failed to fetch MP3 from RapidAPI:", fetchedData?.msg);
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch MP3 from RapidAPI" });
+    }
+
+    // Return the fetched data to the frontend
+    res.status(200).json({
+      title: fetchedData.title,
+      mp3Link: fetchedData.link,
+    }); */
+    const object = options(videoId);
+    const response = await axios.request(object);
+    console.log(response.data);
+    res.status(200).json(response.data);
   } catch (err) {
-    console.log(err.message);
+    console.error("Error in handleFetchFromYt:", err);
     res.status(500).json({ error: err.message });
   }
 };
+
+export default handleFetchFromYt;
