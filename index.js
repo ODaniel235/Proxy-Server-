@@ -2,6 +2,8 @@ import cors from "cors";
 import express from "express";
 import fetch from "node-fetch";
 import handleFetchFromYt from "./youtube.js";
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 app.use(
   cors({

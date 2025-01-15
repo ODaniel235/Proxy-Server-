@@ -1,5 +1,7 @@
 import ytdl from "@distube/ytdl-core";
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 const options = (id) => {
   return {
     method: "GET",
