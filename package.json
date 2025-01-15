@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "env YTDL_NO_UPDATE=1 nodemon index.js"
   },
   "keywords": [],
   "author": "",
