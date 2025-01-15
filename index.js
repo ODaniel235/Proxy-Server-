@@ -14,7 +14,7 @@ app.get("/link", fetchFromYt);
 app.get("*", async (req, res) => {
   try {
     const { url } = req.query;
-    if (!url) {
+    if (!url) {   
       return res.status(400).json({ error: "No URL provided" });
     }
     const response = await fetch(url);
