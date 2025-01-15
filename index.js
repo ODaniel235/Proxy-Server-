@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import fetch from "node-fetch";
+import { fetchFromYt } from "./youtube.js";
 const app = express();
 app.use(
   cors({
@@ -9,6 +10,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.get("/link", fetchFromYt);
 app.get("*", async (req, res) => {
   try {
     const { url } = req.query;
