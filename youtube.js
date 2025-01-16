@@ -13,6 +13,12 @@ const options = (id) => {
     },
   };
 };
+const extractVideoId=(id)=>{
+  const regex = /(?:\?v=|\/embed\/|\.be\/|\/v\/|\/watch\?v=|&v=|\/shorts\/|^v=|\/watch\?.*?v=)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+
+}
 
 // Usage Example
 const handleFetchFromYt = async (req, res) => {
@@ -28,8 +34,7 @@ const handleFetchFromYt = async (req, res) => {
     console.log("Fetching video details for:", link);
 
     // Get basic info using ytdl-core
-    const data = await ytdl.getBasicInfo(link);
-    const videoId = data.videoDetails.videoId;
+    const videoId = extractVideoId(link)
 
     if (!videoId) {
       console.error("Failed to extract video ID");
