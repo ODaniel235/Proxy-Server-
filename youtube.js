@@ -13,7 +13,7 @@ const options = (id) => {
     },
   };
 };
-const extractVideoId=(id)=>{
+const extractVideoId=(url)=>{
   const regex = /(?:\?v=|\/embed\/|\.be\/|\/v\/|\/watch\?v=|&v=|\/shorts\/|^v=|\/watch\?.*?v=)([a-zA-Z0-9_-]{11})/;
   const match = url.match(regex);
   return match ? match[1] : null;
